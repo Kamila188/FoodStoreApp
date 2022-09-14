@@ -18,7 +18,7 @@ namespace FoodStoreApp.Controllers
             IEnumerable<Manufacturers> manufacturerList = _db.Manufacturers;
             return View(manufacturerList);
         }
-       
+
 
         //GET - CREATE
         public IActionResult Create()
@@ -41,7 +41,29 @@ namespace FoodStoreApp.Controllers
         //GET - EDIT
         public IActionResult Edit(int? id)
         {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var cat = _db.Manufacturers.Find(id);
+            if (cat == null)
+            {
+                return NotFound();
+            }
             return View();
+        }
+        //POST - EDIT
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Manufacturers cat)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Manufacturers.Update(cat);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(cat);
         }
         //GET - DELETE
         public IActionResult Delete(int? id)
